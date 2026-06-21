@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Subjects
+    </h2>
+    <p>Manage subject catalog</p>
+    <a href="{% url 'class_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Classes
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+
+    <!-- Subject List -->
+    <div class="card">
+        <h3>All Subjects</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e0e0e0;">
+                    <th style="text-align: left; padding: 10px;">Code</th>
+                    <th style="text-align: left; padding: 10px;">Name</th>
+                    <th style="text-align: left; padding: 10px;">Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject in subjects %}
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                    <td style="padding: 10px;"><strong>{{ subject.code }}</strong></td>
+                    <td style="padding: 10px;">{{ subject.name }}</td>
+                    <td style="padding: 10px;">
+                        <span class="subject-chip {% if subject.category == 'compulsory' %}compulsory{% else %}optional{% endif %}">
+                            {{ subject.get_category_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add Subject Form -->
+    <div class="card">
+        <h3>Add New Subject</h3>
+        <form method="post" action="{% url 'add_subject' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Subject Code</label>
+                <input type="text" name="code" class="form-control" placeholder="e.g., LUG" required>
+            </div>
+            <div class="form-group">
+                <label>Subject Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g., Luganda" required>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" class="form-control">
+                    <option value="optional">Optional</option>
+                    <option value="compulsory">Compulsory</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Add Subject</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .subject-chip{ padding: 4px 10px; border-radius: 12px; font-size: 12px; display: inline-block; }
+    .subject-chip.compulsory{ background: #e8eaf6; }
+    .subject-chip.optional{ background: #fff3e0; }
+</style>
+{% endblock %}

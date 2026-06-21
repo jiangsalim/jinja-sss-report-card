@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
+        {{ class_obj.name }}
+    </h2>
+    <p>Manage streams and compulsory subjects</p>
+    <a href="{% url 'class_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Classes
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+    <!-- Streams Panel -->
+    <div class="card">
+        <h3 style="margin-bottom: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; display: inline; vertical-align: middle;">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="3" y1="9" x2="21" y2="9"/>
+                <line x1="9" y1="21" x2="9" y2="9"/>
+            </svg>
+            Streams
+        </h3>
+
+        {% if streams %}
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                                {% for stream in streams %}
+                <div style="background: #e8eaf6; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center; gap: 8px;">
+                    <strong>{{ class_obj.name }}-{{ stream.name }}</strong>
+                    <a href="{% url 'stream_officials' stream.id %}" 
+                       style="color: #1a237e; text-decoration: none; font-size: 11px;"
+                       title="Set Officials">👤</a>
+                    <a href="{% url 'delete_stream' stream.id %}" 
+                       onclick="return confirm('Delete stream {{ class_obj.name }}-{{ stream.name }}?')"
+                       style="color: #e53935; text-decoration: none; font-weight: bold;"
+                       title="Delete">×</a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #999; margin-bottom: 20px;">No streams created yet.</p>
+        {% endif %}
+
+        <form method="post" action="{% url 'create_stream' class_obj.id %}" style="display: flex; gap: 10px;">
+            {% csrf_token %}
+            <input type="text" name="stream_name" placeholder="Stream name (e.g., A, B, C)" class="form-control" style="width: auto;" required>
+            <button type="submit" class="btn btn-primary">Add Stream</button>
+        </form>
+    </div>
+
+    <!-- Compulsory Subjects Panel -->
+    <div class="card">
+        <h3 style="margin-bottom: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; display: inline; vertical-align: middle;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Compulsory Subjects
+        </h3>
+
+        <form method="post">
+            {% csrf_token %}
+            <div style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;">
+                {% for subject in all_subjects %}
+                <label style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; cursor: pointer;">
+                    <input type="checkbox" 
+                           name="compulsory_subjects" 
+                           value="{{ subject.id }}"
+                           {% if subject in compulsory_subjects %}checked{% endif %}
+                           style="width: 18px; height: 18px;">
+                    <span>{{ subject.name }}</span>
+                    <span style="color: #999; font-size: 12px;">({{ subject.code }})</span>
+                </label>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Save Compulsory Subjects</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

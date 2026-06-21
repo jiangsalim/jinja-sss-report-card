@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>
+        {{ teacher.get_full_name }}
+    </h2>
+    <a href="{% url 'teacher_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Teachers
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+    <div class="card">
+        <h3>Teacher Information</h3>
+        <table style="width: 100%;">
+            <tr><td style="padding: 8px; color: #666;">Name</td><td style="padding: 8px;"><strong>{{ teacher.get_full_name }}</strong></td></tr>
+            <tr><td style="padding: 8px; color: #666;">Email</td><td style="padding: 8px;">{{ teacher.email }}</td></tr>
+            <tr><td style="padding: 8px; color: #666;">Phone</td><td style="padding: 8px;">{{ teacher.phone|default:"-" }}</td></tr>
+            <tr><td style="padding: 8px; color: #666;">Status</td><td style="padding: 8px;">{{ teacher.is_active|yesno:"Active,Inactive" }}</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Credentials</h3>
+        <p style="margin-bottom: 15px;">Download credentials and share with the teacher.</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="{% url 'download_credentials' teacher.id %}" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download Credentials CSV
+            </a>
+            <a href="{% url 'reset_password' teacher.id %}" class="btn btn-primary" style="background: #e65100;" onclick="return confirm('Reset password for {{ teacher.get_full_name }}?')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Reset Password
+            </a>
+            <a href="{% url 'delete_teacher' teacher.id %}" class="btn btn-primary" style="background: #c62828;" onclick="return confirm('DELETE {{ teacher.get_full_name }}? This cannot be undone.')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                Delete Teacher
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3>Current Assignments</h3>
+    {% if assignments %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #e8eaf6;">
+                <th style="padding: 10px; text-align: left;">Class</th>
+                <th style="padding: 10px; text-align: left;">Stream</th>
+                <th style="padding: 10px; text-align: left;">Subject</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assignment in assignments %}
+            <tr style="border-bottom: 1px solid #f0f0f0;">
+                <td style="padding: 10px;">{{ assignment.stream.class_obj.name }}</td>
+                <td style="padding: 10px;">{{ assignment.stream.name }}</td>
+                <td style="padding: 10px;">{{ assignment.subject.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #999;">No assignments yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

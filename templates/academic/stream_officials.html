@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>
+        Set Officials for {{ stream.class_obj.name }}-{{ stream.name }}
+    </h2>
+    <a href="{% url 'class_detail' stream.class_obj.id %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to {{ stream.class_obj.name }}
+    </a>
+</div>
+
+<div class="card" style="max-width: 500px;">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Class Teacher</label>
+            <input type="text" name="class_teacher" class="form-control" 
+                   value="{{ officials.class_teacher }}" 
+                   placeholder="e.g., Mr. James Okafor">
+        </div>
+        <div class="form-group">
+            <label>Head of Academics</label>
+            <input type="text" name="head_of_academics" class="form-control" 
+                   value="{{ officials.head_of_academics }}" 
+                   placeholder="e.g., Ms. Sarah Wanjiku">
+        </div>
+        <div class="form-group">
+            <label>Head Teacher</label>
+            <input type="text" name="head_teacher" class="form-control" 
+                   value="{{ officials.head_teacher }}" 
+                   placeholder="e.g., Mr. Robert Ssebunya">
+        </div>
+        <button type="submit" class="btn btn-primary">Save Officials</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Import A-Level Students
+    </h2>
+    <a href="{% url 'student_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Students
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="card">
+        <h3>Upload A-Level CSV</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Select CSV File</label>
+                <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Upload & Import</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>A-Level CSV Format</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #e8eaf6;">
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Column</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Required</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">admission_no</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">ADM-500</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">first_name</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">Alice</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">last_name</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">Mbeki</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">gender</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">M or F</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">class_name</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">Senior 5</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">stream_name</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">A</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">subject_1</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">PHY</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">subject_2</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">CHEM</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">subject_3</td><td style="padding: 8px; border: 1px solid #ddd;">✅</td><td style="padding: 8px; border: 1px solid #ddd;">MATH</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">subsidiary</td><td style="padding: 8px; border: 1px solid #ddd;">❌</td><td style="padding: 8px; border: 1px solid #ddd;">ICT</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">parent_name</td><td style="padding: 8px; border: 1px solid #ddd;">❌</td><td style="padding: 8px; border: 1px solid #ddd;">Robert Mbeki</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">parent_phone</td><td style="padding: 8px; border: 1px solid #ddd;">❌</td><td style="padding: 8px; border: 1px solid #ddd;">+256712345678</td></tr>
+            </tbody>
+        </table>
+        <p style="margin-top: 15px; font-size: 12px; color: #666;">
+            ✅ GP (General Paper) is auto-assigned to all A-Level students.<br>
+            ✅ List the 3 principal subjects directly (e.g., PHY, CHEM, MATH).<br>
+            ✅ Subsidiary is optional (e.g., ICT, SUB-MATH).
+        </p>
+    </div>
+</div>
+{% endblock %}

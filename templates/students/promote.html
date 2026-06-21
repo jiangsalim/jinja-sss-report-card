@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Promote Students
+    </h2>
+    <p>End of Academic Year — {{ current_term.name }} {{ current_term.academic_year.name }}</p>
+    <a href="{% url 'student_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Students
+    </a>
+</div>
+
+{% if current_term.name != 'Term 3' %}
+<div class="card" style="text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 15px;">🔒</div>
+    <h3 style="color: #c62828;">Promotion Locked</h3>
+    <p>Promotion is only available during <strong>Term 3</strong> (end of academic year).</p>
+    <p style="color: #999;">Current term: {{ current_term.name }}</p>
+</div>
+{% else %}
+
+<div class="card" style="margin-bottom: 20px;">
+    <h3>Current Enrollment</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for class_name, count in current_counts.items %}
+        <div style="flex: 1; min-width: 100px; text-align: center; padding: 12px; background: #e8eaf6; border-radius: 8px;">
+            <div style="font-size: 20px; font-weight: 700; color: #1a237e;">{{ count }}</div>
+            <div style="font-size: 11px; color: #666;">{{ class_name }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="card">
+        <h3 style="color: #2e7d32;">Students to Promote</h3>
+        {% if preview %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #e8eaf6;">
+                    <th style="padding: 10px; text-align: left;">Movement</th>
+                    <th style="padding: 10px; text-align: center;">Students</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movement, count in preview.items %}
+                <tr style="border-bottom: 1px solid #e0e0e0;">
+                    <td style="padding: 10px;">{{ movement }}</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700;">{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #999;">No students to promote.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3 style="color: #e65100;">Students Graduating</h3>
+        {% if graduating %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #fff3e0;">
+                    <th style="padding: 10px; text-align: left;">Class</th>
+                    <th style="padding: 10px; text-align: center;">Students</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class_name, count in graduating.items %}
+                <tr style="border-bottom: 1px solid #e0e0e0;">
+                    <td style="padding: 10px;">{{ class_name }} → Graduates</td>
+                    <td style="padding: 10px; text-align: center; font-weight: 700;">{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p style="margin-top: 10px; font-size: 12px; color: #999;">
+            These students will be marked as graduated and can be wiped later.
+        </p>
+        {% else %}
+        <p style="color: #999;">No graduating students.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card" style="margin-top: 20px; background: #fff3e0; border: 1px solid #ffcc02;">
+    <h3 style="color: #e65100;">⚠️ What Will Happen</h3>
+    <ul style="padding-left: 20px; font-size: 13px; color: #333;">
+        <li>S1 → S2, S2 → S3, S3 → S4, S5 → S6</li>
+        <li>S4 & S6 students marked as <strong>graduated</strong></li>
+        <li>S1 & S5 streams <strong>wiped clean</strong> (ready for new intake)</li>
+        <li>This action <strong>cannot be undone</strong></li>
+    </ul>
+
+    <form method="post" style="margin-top: 15px;" onsubmit="return confirm('CONFIRM: Promote all students and graduate S4/S6? This cannot be undone.');">
+        {% csrf_token %}
+        <input type="hidden" name="confirm" value="YES">
+        <button type="submit" class="btn btn-primary" style="background: #c62828; width: 100%;">
+            Execute Promotion & Graduation
+        </button>
+    </form>
+</div>
+
+{% endif %}
+{% endblock %}

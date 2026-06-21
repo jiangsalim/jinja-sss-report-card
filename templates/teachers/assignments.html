@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Teacher Assignments
+    </h2>
+    <p>Assign teachers to streams and subjects</p>
+    <a href="{% url 'teacher_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Teachers
+    </a>
+</div>
+
+<div style="margin-bottom: 20px; display: flex; gap: 10px;">
+    <a href="?level=O-Level{% if class_filter %}&class={{ class_filter }}{% endif %}" 
+       class="btn btn-primary" 
+       style="background: {% if current_level == 'O-Level' %}#1a237e{% else %}#9fa8da{% endif %};">
+        O-Level
+    </a>
+    <a href="?level=A-Level{% if class_filter %}&class={{ class_filter }}{% endif %}" 
+       class="btn btn-primary" 
+       style="background: {% if current_level == 'A-Level' %}#1a237e{% else %}#9fa8da{% endif %};">
+        A-Level
+    </a>
+</div>
+
+<div class="card" style="margin-bottom: 20px;">
+    <form method="get" style="display: flex; gap: 15px; align-items: end;">
+        <input type="hidden" name="level" value="{{ current_level }}">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Class</label>
+            <select name="class" class="form-control" onchange="this.form.submit()">
+                <option value="">Select Class</option>
+                {% for class_obj in classes %}
+                <option value="{{ class_obj.id }}" {% if class_filter == class_obj.id|stringformat:"s" %}selected{% endif %}>
+                    {{ class_obj.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Stream</label>
+            <select name="stream" class="form-control" onchange="this.form.submit()">
+                <option value="">Select Stream</option>
+                {% for stream in streams %}
+                <option value="{{ stream.id }}" {% if stream_filter == stream.id|stringformat:"s" %}selected{% endif %}>
+                    {{ stream.class_obj.name }}-{{ stream.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Load</button>
+    </form>
+</div>
+
+{% if stream_filter %}
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+    <div class="card">
+        <h3>Assign Teacher</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="level" value="{{ current_level }}">
+            <div class="form-group">
+                <label>Subject</label>
+                <select name="subject" class="form-control" required>
+                    <option value="">Select Subject</option>
+                    {% for subject in stream_subjects %}
+                    <option value="{{ subject.id }}">{{ subject.code }} - {{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Teacher</label>
+                <select name="teacher" class="form-control" required>
+                    <option value="">Select Teacher</option>
+                    {% for teacher in all_teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.get_full_name }} ({{ teacher.email }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Assign Teacher</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Current Assignments — {{ current_level }}</h3>
+        {% if assignments %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #e8eaf6;">
+                    <th style="padding: 8px; text-align: left;">Subject</th>
+                    <th style="padding: 8px; text-align: left;">Teacher</th>
+                    <th style="padding: 8px; text-align: left;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                    <td style="padding: 8px;">{{ assignment.subject.name }}</td>
+                    <td style="padding: 8px;">{{ assignment.teacher.get_full_name }}</td>
+                    <td style="padding: 8px;">
+                        <a href="{% url 'remove_assignment' assignment.id %}" 
+                           onclick="return confirm('Remove this assignment?')"
+                           style="color: #e53935; text-decoration: none;">✕</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #999;">No assignments for this stream yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endif %}
+{% endblock %}

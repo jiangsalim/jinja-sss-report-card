@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Import Teachers
+    </h2>
+    <a href="{% url 'teacher_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Teachers
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div class="card">
+        <h3>Upload CSV File</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Select CSV File</label>
+                <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Upload & Import
+            </button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>CSV Format</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #e8eaf6;">
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Column</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Required</th>
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">first_name</td><td style="padding: 8px; border: 1px solid #ddd;">✅ Yes</td><td style="padding: 8px; border: 1px solid #ddd;">James</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">last_name</td><td style="padding: 8px; border: 1px solid #ddd;">❌ No</td><td style="padding: 8px; border: 1px solid #ddd;">Okafor</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">email</td><td style="padding: 8px; border: 1px solid #ddd;">✅ Yes</td><td style="padding: 8px; border: 1px solid #ddd;">okafor@jinjasss.sc.ug</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">phone</td><td style="padding: 8px; border: 1px solid #ddd;">❌ No</td><td style="padding: 8px; border: 1px solid #ddd;">+256712345678</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">staff_id</td><td style="padding: 8px; border: 1px solid #ddd;">❌ No</td><td style="padding: 8px; border: 1px solid #ddd;">STF-001</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

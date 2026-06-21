@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Grade Entry
+    </h2>
+    <p>
+        {{ stream.class_obj.name }}-{{ stream.name }} — {{ subject.name }} ({{ subject.code }})
+    </p>
+    <a href="{% url 'teacher_dashboard' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to My Classes
+    </a>
+</div>
+
+<!-- New Assessment Form -->
+<div class="card" style="margin-bottom: 20px;">
+    <h3>Add New Assessment</h3>
+    <form method="post" action="{% url 'save_marks' %}">
+        {% csrf_token %}
+        <div style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+            <div class="form-group" style="margin-bottom: 0; flex: 2;">
+                <label>Assessment Name</label>
+                <input type="text" name="assessment_name" class="form-control" placeholder="e.g., Quiz 1, Mid-Term, Final Exam" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                <label>Max Marks</label>
+                <input type="number" name="max_marks" class="form-control" value="100" step="0.01" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                <label>Weight (%)</label>
+                <input type="number" name="weight" class="form-control" value="0" step="0.01" min="0" max="100">
+                <small style="color: #999;">e.g., 30 = 30% of final grade</small>
+            </div>
+        </div>
+
+        <p style="margin-top: 15px; font-weight: 500;">Enter marks for each student below:</p>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #1a237e; color: white;">
+                        <th style="padding: 10px; text-align: left;">#</th>
+                        <th style="padding: 10px; text-align: left;">Student</th>
+                        <th style="padding: 10px; text-align: center;">Marks Obtained</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ss in student_subjects %}
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 8px;">{{ forloop.counter }}</td>
+                        <td style="padding: 8px;">{{ ss.student.full_name }} <small style="color: #999;">({{ ss.student.admission_no }})</small></td>
+                        <td style="padding: 8px; text-align: center;">
+                            <input type="number" 
+                                   name="marks_{{ ss.id }}" 
+                                   class="form-control" 
+                                   style="width: 100px; display: inline-block;" 
+                                   step="0.01" 
+                                   placeholder="-">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Save This Assessment</button>
+    </form>
+</div>
+
+<!-- Existing Assessments -->
+{% if assessment_names %}
+<div class="card">
+    <h3>Existing Assessments</h3>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #e8eaf6;">
+                    <th style="padding: 10px; text-align: left;">Student</th>
+                    {% for name in assessment_names %}
+                    <th style="padding: 10px; text-align: center;">{{ name }}</th>
+                    {% endfor %}
+                    <th style="padding: 10px; text-align: center;">Final %</th>
+                    <th style="padding: 10px; text-align: center;">Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ss in student_subjects %}
+                <tr style="border-bottom: 1px solid #e0e0e0;">
+                    <td style="padding: 8px;">{{ ss.student.full_name }}</td>
+                    {% for name in assessment_names %}
+                    <td style="padding: 8px; text-align: center;">
+                        {% for assessment in ss.existing_assessments %}
+                            {% if assessment.name == name %}
+                                {{ assessment.marks_obtained }} / {{ assessment.max_marks }}
+                                <br><small style="color: #999;">{{ assessment.percentage|floatformat:1 }}%</small>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    {% endfor %}
+                    <td style="padding: 8px; text-align: center; font-weight: bold;">
+                        {% with grade=ss.grade_entries.first %}
+                            {{ grade.final_percentage|default:"-" }}
+                        {% endwith %}
+                    </td>
+                    <td style="padding: 8px; text-align: center; font-weight: bold;">
+                        {% with grade=ss.grade_entries.first %}
+                            {{ grade.letter_grade|default:"-" }}
+                        {% endwith %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post" action="{% url 'submit_marks' assignment.id %}" style="margin-top: 20px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary" style="background: #2e7d32;" onclick="return confirm('Submit all marks for review? This will calculate final grades.')">
+            Submit All Marks & Calculate Grades
+        </button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

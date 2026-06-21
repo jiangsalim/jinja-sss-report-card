@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M16 3.5L19.5 7 21 5.5"/>
+        </svg>
+        Teachers
+    </h2>
+    <p>Manage teacher accounts</p>
+</div>
+
+<div style="margin-bottom: 20px; display: flex; gap: 10px;">
+    <a href="{% url 'import_teachers' %}" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Import Teachers
+    </a>
+    <a href="{% url 'teacher_assignments' %}" class="btn btn-primary" style="background: #4a148c;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Teacher Assignments
+    </a>
+        <a href="{% url 'create_teacher' %}" class="btn btn-primary" style="background: #2e7d32;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Add Teacher
+    </a>
+</div>
+
+<div class="card">
+    <p style="margin-bottom: 15px;"><strong>{{ teachers.count }}</strong> teacher{{ teachers.count|pluralize }}</p>
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #1a237e; color: white;">
+                    <th style="padding: 12px; text-align: left;">Name</th>
+                    <th style="padding: 12px; text-align: left;">Email</th>
+                    <th style="padding: 12px; text-align: left;">Phone</th>
+                    <th style="padding: 12px; text-align: left;">Status</th>
+                    <th style="padding: 12px; text-align: left;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr style="border-bottom: 1px solid #e0e0e0;">
+                    <td style="padding: 10px;"><strong>{{ teacher.get_full_name }}</strong></td>
+                    <td style="padding: 10px;">{{ teacher.email }}</td>
+                    <td style="padding: 10px;">{{ teacher.phone|default:"-" }}</td>
+                    <td style="padding: 10px;">
+                        {% if teacher.is_active %}
+                            <span style="background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Active</span>
+                        {% else %}
+                            <span style="background: #f8d7da; color: #721c24; padding: 4px 10px; border-radius: 12px; font-size: 12px;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 10px;">
+                        <a href="{% url 'teacher_detail' teacher.id %}" class="btn btn-primary" style="padding: 5px 12px; font-size: 12px;">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 30px; text-align: center; color: #999;">
+                        No teachers found. <a href="{% url 'import_teachers' %}">Import teachers</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

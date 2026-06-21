@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Grade Status - {{ current_term.name }}
+    </h2>
+    <p>Monitor grade submissions</p>
+</div>
+
+<div class="card" style="margin-bottom: 20px;">
+    <form method="get" style="display: flex; gap: 15px; align-items: end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Class</label>
+            <select name="class" class="form-control" onchange="this.form.submit()">
+                <option value="">Select Class</option>
+                {% for class_obj in classes %}
+                <option value="{{ class_obj.id }}" {% if class_filter == class_obj.id|stringformat:"s" %}selected{% endif %}>
+                    {{ class_obj.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Stream</label>
+            <select name="stream" class="form-control" onchange="this.form.submit()">
+                <option value="">Select Stream</option>
+                {% for stream in streams %}
+                <option value="{{ stream.id }}" {% if stream_filter == stream.id|stringformat:"s" %}selected{% endif %}>
+                    {{ stream.class_obj.name }}-{{ stream.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">View Status</button>
+    </form>
+</div>
+
+{% if status_data %}
+<div class="card">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #1a237e; color: white;">
+                    <th style="padding: 12px; text-align: left;">Subject</th>
+                    <th style="padding: 12px; text-align: center;">Total Students</th>
+                    <th style="padding: 12px; text-align: center;">Graded</th>
+                    <th style="padding: 12px; text-align: center;">Pending</th>
+                    <th style="padding: 12px; text-align: center;">Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in status_data %}
+                <tr style="border-bottom: 1px solid #e0e0e0;">
+                    <td style="padding: 10px;"><strong>{{ data.subject.name }}</strong> ({{ data.subject.code }})</td>
+                    <td style="padding: 10px; text-align: center;">{{ data.total }}</td>
+                    <td style="padding: 10px; text-align: center; color: #2e7d32;">{{ data.graded }}</td>
+                    <td style="padding: 10px; text-align: center; color: #c62828;">{{ data.pending }}</td>
+                    <td style="padding: 10px; text-align: center;">
+                        <div style="background: #e0e0e0; border-radius: 10px; height: 20px; width: 100%;">
+                            <div style="background: {% if data.percent == 100 %}#2e7d32{% elif data.percent > 50 %}#f9a825{% else %}#c62828{% endif %}; border-radius: 10px; height: 100%; width: {{ data.percent }}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold;">
+                                {% if data.percent > 20 %}{{ data.percent }}%{% endif %}
+                            </div>
+                        </div>
+                        {% if data.percent <= 20 %}<small>{{ data.percent }}%</small>{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if stream_filter %}
+    <form method="post" action="{% url 'finalize_grades' %}" style="margin-top: 20px;">
+        {% csrf_token %}
+        <input type="hidden" name="stream_id" value="{{ stream_filter }}">
+        <button type="submit" class="btn btn-primary" style="background: #c62828;" 
+                onclick="return confirm('LOCK all grades for this stream? Teachers will no longer be able to edit.')">
+            🔒 Finalize & Lock All Grades
+        </button>
+    </form>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

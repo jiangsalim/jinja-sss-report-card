@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Add New Student
+    </h2>
+    <a href="{% url 'student_list' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Students
+    </a>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>Admission Number *</label>
+                <input type="text" name="admission_no" class="form-control" placeholder="e.g., ADM-011" required>
+            </div>
+            <div class="form-group">
+                <label>Gender *</label>
+                <select name="gender" class="form-control" required>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" name="first_name" class="form-control" placeholder="e.g., John" required>
+            </div>
+            <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" name="last_name" class="form-control" placeholder="e.g., Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Class *</label>
+                <select name="class_id" class="form-control" required>
+                    <option value="">Select Class</option>
+                    {% for class_obj in classes %}
+                    <option value="{{ class_obj.id }}">{{ class_obj.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Stream *</label>
+                <select name="stream_id" class="form-control" required>
+                    <option value="">Select Stream</option>
+                    {% for stream in streams %}
+                    <option value="{{ stream.id }}">{{ stream.class_obj.name }}-{{ stream.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Parent Name</label>
+                <input type="text" name="parent_name" class="form-control" placeholder="e.g., James Doe">
+            </div>
+            <div class="form-group">
+                <label>Parent Phone</label>
+                <input type="text" name="parent_phone" class="form-control" placeholder="e.g., +256712345678">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Parent Email</label>
+            <input type="email" name="parent_email" class="form-control" placeholder="e.g., parent@email.com">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Create Student</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Student & Parent Portal
+    </h2>
+    <p>Welcome, {{ user.get_full_name|default:user.username }}</p>
+</div>
+
+{% if student and enrollment %}
+<div class="card" style="margin-bottom: 20px;">
+    <h3>Student Information</h3>
+    <table style="width: 100%;">
+        <tr>
+            <td style="padding: 8px; color: #666;">Name</td>
+            <td style="padding: 8px;"><strong>{{ student.full_name }}</strong></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; color: #666;">Admission No</td>
+            <td style="padding: 8px;">{{ student.admission_no }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; color: #666;">Class</td>
+            <td style="padding: 8px;">{{ enrollment.stream.class_obj.name }} {{ enrollment.stream.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px; color: #666;">Gender</td>
+            <td style="padding: 8px;">{{ student.get_gender_display }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="dashboard-grid">
+    {% if current_report %}
+    <a href="{% url 'report_card' current_report.student_id %}" class="dashboard-card" style="border: 2px solid #2e7d32;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <path d="M10 12l2 2 4-4"/>
+        </svg>
+        <h3 style="color: #2e7d32;">Current Report Card</h3>
+        <p>{{ current_report.term.name }} {{ current_report.term.academic_year.name }} — Published ✅</p>
+    </a>
+    {% else %}
+    <div class="dashboard-card" style="border: 2px dashed #ccc; cursor: default;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <h3 style="color: #999;">Current Report Card</h3>
+        <p style="color: #999;">Not yet published. Please check back later.</p>
+    </div>
+    {% endif %}
+
+    {% if past_reports %}
+        {% for report in past_reports %}
+        <a href="{% url 'report_card' report.student_id %}" class="dashboard-card">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <path d="M10 12l2 2 4-4"/>
+            </svg>
+            <h3>Past Report Card</h3>
+            <p>{{ report.term.name }} {{ report.term.academic_year.name }}</p>
+        </a>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{% if not current_report and not past_reports %}
+<div class="card" style="margin-top: 20px; text-align: center;">
+    <p style="color: #999;">No report cards available yet.</p>
+    <p style="color: #999; font-size: 13px;">Reports will appear here once published by the school.</p>
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <p style="color: #999;">No student record found. Please contact the school administration.</p>
+</div>
+{% endif %}
+{% endblock %}

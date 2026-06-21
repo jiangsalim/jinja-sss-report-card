@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M16 3.5L19.5 7 21 5.5"/>
+        </svg>
+        Teacher Dashboard
+    </h2>
+    <p>Welcome, {{ user.get_full_name }}</p>
+</div>
+
+{% if assignments %}
+<p style="color: #666; margin-bottom: 20px;">My Classes — Click a class to enter grades</p>
+
+<div class="dashboard-grid">
+    {% for assignment in assignments %}
+    <a href="{% url 'grade_entry' assignment.id %}" class="dashboard-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
+        <h3>{{ assignment.stream.class_obj.name }}-{{ assignment.stream.name }}</h3>
+        <p style="font-size: 15px; font-weight: 500; color: #333;">{{ assignment.subject.name }}</p>
+        <p style="font-size: 12px; color: #999;">{{ assignment.subject.code }}</p>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <p>No classes assigned yet. Please contact the administrator.</p>
+</div>
+{% endif %}
+{% endblock %}

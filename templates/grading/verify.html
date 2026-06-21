@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 50px auto;">
+    <div class="card" style="text-align: center;">
+        {% if valid %}
+            <div style="color: #2e7d32; margin-bottom: 20px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 60px; height: 60px;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <h2 style="color: #2e7d32;">✅ Report Card Verified</h2>
+            <p>This is an authentic report card from Jinja SSS.</p>
+            <table style="width: 100%; margin-top: 20px; text-align: left;">
+                <tr>
+                    <td style="padding: 8px; color: #666;">Student Name:</td>
+                    <td style="padding: 8px;"><strong>{{ student.full_name }}</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; color: #666;">Admission No:</td>
+                    <td style="padding: 8px;">{{ student.admission_no }}</td>
+                </tr>
+                {% if enrollment %}
+                <tr>
+                    <td style="padding: 8px; color: #666;">Class:</td>
+                    <td style="padding: 8px;">{{ enrollment.stream.class_obj.name }} {{ enrollment.stream.name }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td style="padding: 8px; color: #666;">Term:</td>
+                    <td style="padding: 8px;">{{ term.name }} {{ term.academic_year.name }}</td>
+                </tr>
+            </table>
+        {% else %}
+            <div style="color: #c62828; margin-bottom: 20px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 60px; height: 60px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+            </div>
+            <h2 style="color: #c62828;">❌ Verification Failed</h2>
+            <p>{{ message }}</p>
+            <p style="color: #999; font-size: 13px;">This report card could not be verified. It may be counterfeit or altered.</p>
+        {% endif %}
+
+        <a href="{% url 'login' %}" style="display: inline-block; margin-top: 20px; color: #1a237e; text-decoration: none;">
+            ← Back to Login
+        </a>
+    </div>
+</div>
+{% endblock %}

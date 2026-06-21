@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Grading Scale
+    </h2>
+    <p>Manage grade thresholds and remarks</p>
+    <a href="{% url 'admin_dashboard' %}" style="color: #1a237e; text-decoration: none;">
+        ← Back to Dashboard
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+    <div class="card">
+        <h3>Current Grading Scale</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background: #1a237e; color: white;">
+                    <th style="padding: 10px; text-align: left;">Grade</th>
+                    <th style="padding: 10px; text-align: center;">Min %</th>
+                    <th style="padding: 10px; text-align: center;">Max %</th>
+                    <th style="padding: 10px; text-align: left;">Remark</th>
+                    <th style="padding: 10px; text-align: center;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scale in scales %}
+                <tr style="border-bottom: 1px solid #e0e0e0;">
+                    <td style="padding: 10px;">
+                        <span class="grade-badge grade-{{ scale.grade_letter|slice:':1' }}" style="font-size: 12px;">
+                            {{ scale.grade_letter }}
+                        </span>
+                    </td>
+                    <td style="padding: 10px; text-align: center;">{{ scale.min_percent }}%</td>
+                    <td style="padding: 10px; text-align: center;">{{ scale.max_percent }}%</td>
+                    <td style="padding: 10px;">{{ scale.remark }}</td>
+                    <td style="padding: 10px; text-align: center;">
+                        <a href="{% url 'delete_scale' scale.id %}" 
+                           onclick="return confirm('Delete grade {{ scale.grade_letter }}?')"
+                           style="color: #e53935; text-decoration: none;">✕</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 20px; text-align: center; color: #999;">No grades defined yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Add / Update Grade</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Grade Letter</label>
+                <input type="text" name="grade_letter" class="form-control" placeholder="e.g., A, B+, C" maxlength="3" required>
+            </div>
+            <div class="form-group">
+                <label>Minimum Percentage</label>
+                <input type="number" name="min_percent" class="form-control" placeholder="e.g., 80" step="0.01" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <label>Maximum Percentage</label>
+                <input type="number" name="max_percent" class="form-control" placeholder="e.g., 100" step="0.01" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <label>Remark (optional)</label>
+                <input type="text" name="remark" class="form-control" placeholder="e.g., Excellent, Very Good">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Grade</button>
+        </form>
+
+        <div style="margin-top: 20px; padding: 15px; background: #e8eaf6; border-radius: 8px; font-size: 12px;">
+            <strong>Default Scale:</strong><br>
+            A: 80-100 (Excellent)<br>
+            B+: 75-79 (Very Good)<br>
+            B: 70-74 (Good)<br>
+            C: 60-69 (Credit)<br>
+            D: 50-59 (Pass)<br>
+            F: 0-49 (Fail)
+        </div>
+    </div>
+
+</div>
+{% endblock %}

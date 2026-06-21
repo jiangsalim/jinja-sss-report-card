@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
+        Classes & Streams
+    </h2>
+    <p>Manage academic structure</p>
+</div>
+
+<div style="margin-bottom: 20px; display: flex; gap: 10px;">
+    <a href="?level=O-Level" class="btn btn-primary" style="background: {% if current_level == 'O-Level' %}#1a237e{% else %}#9fa8da{% endif %};">
+        O-Level
+    </a>
+    <a href="?level=A-Level" class="btn btn-primary" style="background: {% if current_level == 'A-Level' %}#1a237e{% else %}#9fa8da{% endif %};">
+        A-Level
+    </a>
+</div>
+
+<div class="dashboard-grid">
+    {% for class_obj in classes %}
+    <a href="{% url 'class_detail' class_obj.id %}" class="dashboard-card">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+        </svg>
+        <h3>{{ class_obj.name }}</h3>
+        <p>{{ class_obj.streams.count }} stream{{ class_obj.streams.count|pluralize }}</p>
+        <p style="font-size: 11px; color: #999;">{{ class_obj.level_type }}</p>
+    </a>
+    {% endfor %}
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'subject_list' %}" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Manage Subjects
+    </a>
+</div>
+{% endblock %}
