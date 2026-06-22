@@ -1,8 +1,59 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="max-width: 420px; margin: 80px auto;">
-    <div class="card">
+<style>
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: url('/static/img/school-bg.jpg') center/cover no-repeat;
+        position: relative;
+        margin: -30px -20px;
+    }
+
+    .login-page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.55);
+    }
+
+    .login-card {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 420px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+    }
+
+    .login-card .login-badge img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #1a237e;
+        padding: 3px;
+        background: white;
+    }
+
+    @media (max-width: 480px) {
+        .login-card {
+            margin: 15px;
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-card">
 
         <div class="login-badge">
             <img src="/static/img/school-badge.jfif" alt="Jinja SSS Badge">
@@ -11,8 +62,8 @@
         <div class="school-name">Jinja Senior Secondary School</div>
         <div class="school-motto">"Striving for Excellence"</div>
 
-        <h2 style="text-align: center; justify-content: center; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <h2 style="text-align: center; justify-content: center; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                 <circle cx="9" cy="7" r="4"/>
                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -52,7 +103,7 @@
         </form>
 
         <p style="text-align: center; margin-top: 15px; font-size: 12px;">
-            <a href="{% url 'login' %}" style="color: #1a237e;">← Staff Login</a>
+            <a href="{% url 'login' %}" style="color: #1a237e;">Staff Login</a>
         </p>
     </div>
 </div>
