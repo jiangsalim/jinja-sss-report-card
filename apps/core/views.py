@@ -8,6 +8,7 @@ from apps.students.models import Student, Enrollment, StudentSubject
 from apps.academic.models import AcademicYear, Term, Class, Stream, Subject, ClassCompulsorySubject, StreamOfficials
 from apps.grading.models import Assessment, GradeEntry, GradingScale
 from django.contrib.auth import update_session_auth_hash
+from django.http import HttpResponse
 import os
 import json
 
@@ -229,3 +230,6 @@ def admin_profile(request):
         return redirect('admin_profile')
     
     return render(request, 'core/admin_profile.html')
+
+def health_check(request):
+    return HttpResponse("OK")

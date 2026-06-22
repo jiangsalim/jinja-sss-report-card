@@ -8,4 +8,5 @@ urlpatterns = [
     path('school-settings/', views.school_settings, name='school_settings'),
     path('system-reset/', views.system_reset, name='system_reset'),
     path('profile/', views.admin_profile, name='admin_profile'),
+    path('health/', views.health_check, name='health_check'),
 ]
